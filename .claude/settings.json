@@ -1,4 +1,7 @@
 {
+  "model": "sonnet[1m]",
+  "language": "english",
   "effortLevel": "low",
   "tui": "fullscreen"
+  
 }
