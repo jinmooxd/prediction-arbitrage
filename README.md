@@ -1,4 +1,4 @@
-# prediction-arbitrage
+# Prediction Arbitrage
 
 Cross-platform arbitrage system for binary-outcome prediction markets, targeting the **Kalshi ↔ Polymarket US** venue pair, initial focus on US sports moneylines.
 
