@@ -74,6 +74,7 @@ Fees are the primary determinant of whether a spread is tradable. Both platforms
 
 - US exchange fee schedule (effective April 3, 2026): **uniform taker rate 0.05, maker rebate −0.0125, capped at $1.25 per 100 contracts at 50¢**. Some sources quote this as ~0.30% flat taker with 0.20% maker rebate — reconcile against the live fee endpoint (`GET /fee-rate`) before coding.
 - Collateral: USDC.e + POL for gas (EOA wallets); deposit-wallet signature types available.
+- *(2026-07-19 design review: Polymarket US published an updated fee schedule effective July 1, 2026 — the April 3 numbers above may be stale. Reconcile against the live fee endpoint before M1; see `docs/decisions/0002-design-review-2026-07-19.md`.)*
 
 ### 3.4 Breakeven math (the number that gates everything)
 
@@ -85,7 +86,7 @@ At mid prices (both legs near 50¢), a two-taker-leg arb costs roughly:
 | Polymarket US taker (~50¢, capped) | ~$1.25 |
 | **Total fee load** | **~$3.00** |
 
-→ **Minimum viable gross spread ≈ 3¢/contract at mid prices**, shrinking toward the price extremes where both fee curves approach zero. A worked example from the literature: a 2¢ gross spread on 100 contracts produced $2.00 gross against $3.15 in fees — unprofitable until scaled to ~1,000 contracts (where the same fixed spread clears the proportional fee load).
+→ **Minimum viable gross spread ≈ 3¢/contract at mid prices**, shrinking toward the price extremes where both fee curves approach zero. A worked example from the literature: a 2¢ gross spread on 100 contracts produced $2.00 gross against $3.15 in fees — unprofitable until scaled to ~1,000 contracts (where the same fixed spread clears the proportional fee load). *(2026-07-19 design review: this example is from the Kalshi↔Polymarket **Global** pair — $3.15 is not derivable from §3.1/§3.3, which peak at ~$3.00 combined at 50¢. Treat it as an anecdote; golden tests derive from the reconciled live schedules instead, see `docs/decisions/0002-design-review-2026-07-19.md`.)*
 
 **Fee-reduction levers, in order of impact:**
 
@@ -230,7 +231,7 @@ These cannot be answered from published sources — they are the measurement wor
 7. Inventory drift simulation: given historical outcomes, how fast does capital skew to one venue, and what rebalancing cadence/cost does that imply?
 8. Bundle-arb frequency within each venue (YES+NO < $1 on a single book) — a free byproduct of the same data feed.
 
-**Decision gate:** if question 1 shows fewer than N net-positive, depth-executable opportunities per week (N set by capital and target return), the execution engine is not worth building for sports — pivot categories (politics/econ, where the SSRN evidence is strongest) or shelve.
+**Decision gate:** if question 1 shows fewer than N net-positive, depth-executable opportunities per week (N pre-registered 2026-07-19 as **20/week**, matching DESIGN §9.1 H1), the execution engine is not worth building for sports — pivot categories (politics/econ, where the SSRN evidence is strongest) or shelve.
 
 ---
 

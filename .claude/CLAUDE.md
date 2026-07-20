@@ -12,10 +12,10 @@ Cross-platform arbitrage system for binary prediction markets on the **Kalshi �
 
 ## Hard invariants (violations fail review)
 
-1. **No execution-path code in phase 0.** Nothing that places, cancels, or amends orders on any venue. Do not scaffold it "for later."
+1. **No execution-path code in phase 0.** Nothing that places, cancels, or amends orders on any venue — including venue-write method signatures or protocol stubs. Do not scaffold it "for later." (First permitted exception: the Kalshi sandbox-only harness at the end of phase 1 — see IMPLEMENTATION_PLAN standing rule 3.)
 2. **All money math uses `Decimal`.** Floats never touch prices, fees, or edges. Fee calculations include Kalshi's per-contract round-up and Polymarket US's fee cap.
 3. **Fees, rate limits, thresholds, and pair whitelists are config/data, never code constants.** Both venues changed fee schedules multiple times in 2026; the system fetches live params and versions them.
-4. **No market pair is used without human approval** in the pair registry (resolution-rule hashes; hash change auto-suspends). Never bypass or auto-approve.
+4. **Pair approval — what "used" means:** automated *discovery and scoring* of candidate pairs is always allowed (the matcher requires it). *Recording, paper-trading, and (in later phases) trading* a pair require a human-approved entry in the pair registry (resolution-rule hashes; hash change auto-suspends). One explicitly designated probe pair may be streamed for M2's 10-minute acceptance check before the registry exists. Never bypass or auto-approve.
 5. **The fee-engine golden tests are permanent invariants.** If a change breaks them, the change is wrong or the fee schedule changed — investigate, don't adjust the test to pass.
 6. **Rate-limit budgets are hard:** Polymarket US REST ≤ 10 req/min of the 60/min cap (WS for all price data, ~10 instruments/connection); Kalshi client-side token bucket per docs (429s have no Retry-After).
 7. **Secrets:** credentials come from `.env` / key files only; never read, print, or commit them. `data/` and `*.pem` are off-limits and gitignored. Key files (Kalshi RSA, Polymarket US Ed25519) live outside the repo tree entirely (e.g. `~/.keys/`) and are referenced from `.env` by absolute path — this repo directory never contains key material, so there's nothing inside it for a tool to leak. `.claude/settings.json` permission denials on `.env`/`*.pem`/`data/` are a second layer, not the primary control (they don't stop `Bash` from reading file contents another way).

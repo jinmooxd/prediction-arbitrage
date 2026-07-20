@@ -17,7 +17,7 @@ Project-specific security gate for a trading-adjacent repo whose crown jewels ar
 
 ### 2. Phase-0 invariant (BLOCKER)
 - No code that places, cancels, or amends orders on any venue — including "dormant" scaffolding, commented-out calls, or client methods for venue writes. If the current phase per `CLAUDE.md` is still 0, any execution-path code is a blocker regardless of intent.
-- **Pair approval:** no market pair is used (fetched, subscribed, recorded, or scored) without existing in the human-approved pair registry (resolution-rule hashes). No code path auto-approves a pair or auto-continues past a resolution-rule hash change — a hash change must suspend the pair, never silently re-approve it.
+- **Pair approval (scope per CLAUDE.md invariant 4):** candidate *discovery/scoring* is allowed pre-approval; *recording, paper-trading, or trading* a pair without a human-approved registry entry (resolution-rule hashes) is a BLOCKER — the only exception is M2's explicitly designated probe pair. No code path auto-approves a pair or auto-continues past a resolution-rule hash change — a hash change must suspend the pair, never silently re-approve it.
 
 ### 3. Money-math integrity (BLOCKER class)
 - No `float` in any price, fee, size-cost, or edge computation path (`Decimal` only). Grep the diff for `float(`, bare arithmetic on prices parsed via `json` without Decimal conversion.
