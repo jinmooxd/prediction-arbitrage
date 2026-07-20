@@ -15,3 +15,5 @@ Rules:
 - Fixtures you capture go in tests/fixtures/ and MUST be scrubbed: no account IDs, balances, order IDs, keys, or auth headers. Read-only public endpoints only; if a needed capture requires authenticated calls, use read-only endpoints and scrub, and never place orders of any kind.
 - Respect rate limits while probing: stay well under Polymarket US 60 req/min; single requests with delays, no loops.
 - Every finding lands in docs/runbooks/venues.md (or docs/decisions/ for conflicts) with a date and source link in the same change.
+
+Before finishing, confirm (e.g. `git diff --stat`) that you only touched `docs/` and `tests/fixtures/` — never `src/` or the rest of `tests/`. If a task seems to require editing implementation code, stop and report instead.

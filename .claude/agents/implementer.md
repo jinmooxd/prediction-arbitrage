@@ -17,6 +17,8 @@ Hard rules you must never violate:
 - Never read, print, or log secrets; reference key files by path from config only.
 - All venue-API input passes through pydantic models at the boundary; parse failures raise/alert, never silently default.
 
-Definition of done for your unit: code written, `uv run ruff check .` clean, `uv run pytest` fully green (the whole suite, not just related tests), and the unit's stated acceptance signal passing. If you cannot make it pass in two attempts, stop and report exactly what fails and why — do not weaken tests or acceptance scripts to pass.
+Definition of done for your unit: code written, `uv run ruff check .` clean, `uv run pytest` fully green (the whole suite, not just related tests), and the unit's stated acceptance signal passing. You may fix a failure you can directly diagnose within one verify-fail-fix-verify cycle, but do not loop beyond that — report per CLAUDE.md's "Reporting failures" format instead of retrying further, and do not weaken tests or acceptance scripts to pass.
+
+Before finishing, confirm (e.g. `git diff --stat`) that you only touched your assigned target files and files clearly required to make the unit work — not `src/arb/fees/` or `src/arb/spread/` (money-math's territory). If you find yourself needing to touch those, stop and report instead.
 
 Write empirical discoveries (API quirks, observed limits) into docs/runbooks/ as part of your change.

@@ -18,7 +18,7 @@ Cross-platform arbitrage system for binary prediction markets on the **Kalshi �
 4. **No market pair is used without human approval** in the pair registry (resolution-rule hashes; hash change auto-suspends). Never bypass or auto-approve.
 5. **The fee-engine golden tests are permanent invariants.** If a change breaks them, the change is wrong or the fee schedule changed — investigate, don't adjust the test to pass.
 6. **Rate-limit budgets are hard:** Polymarket US REST ≤ 10 req/min of the 60/min cap (WS for all price data, ~10 instruments/connection); Kalshi client-side token bucket per docs (429s have no Retry-After).
-7. **Secrets:** credentials come from `.env` / key files only; never read, print, or commit them. `data/` and `*.pem` are off-limits and gitignored.
+7. **Secrets:** credentials come from `.env` / key files only; never read, print, or commit them. `data/` and `*.pem` are off-limits and gitignored. Key files (Kalshi RSA, Polymarket US Ed25519) live outside the repo tree entirely (e.g. `~/.keys/`) and are referenced from `.env` by absolute path — this repo directory never contains key material, so there's nothing inside it for a tool to leak. `.claude/settings.json` permission denials on `.env`/`*.pem`/`data/` are a second layer, not the primary control (they don't stop `Bash` from reading file contents another way).
 8. **Validation thresholds (DESIGN §9) are pre-registered.** Never modify H1–H6 thresholds in the same change that computes results.
 
 ## Conventions
@@ -28,6 +28,15 @@ Cross-platform arbitrage system for binary prediction markets on the **Kalshi �
 - Market data → parquet in `data/` (hourly partitions); phase-2 ledger → SQLite. No other storage.
 - Empirical findings (WS connection limits, latencies, fee discrepancies) get written to `docs/runbooks/` or `docs/decisions/` in the same PR that discovers them.
 - Prefer small PRs scoped to one milestone task; each milestone's acceptance criteria in IMPLEMENTATION_PLAN.md define done.
+
+## Reporting failures
+
+When an agent stops instead of finishing (failing acceptance criteria, a spec conflict, an unreproducible golden case, an ambiguous scope boundary), report in this form so the orchestrator can act on it without follow-up questions:
+- **Attempted:** what you tried.
+- **Failure:** the exact command and error/output (not a paraphrase).
+- **Hypothesis:** one line on the likely cause, if you have one.
+
+Iteration budget: an agent may fix a failure it can directly diagnose within its current dispatch (one verify-fail-fix-verify cycle), but must not loop beyond that — report using the format above instead. The orchestrator (`plan-and-ship`) owns the only iteration counter across re-dispatches; it does not compound with any agent-internal retry.
 
 ## Things that look like good ideas but aren't
 

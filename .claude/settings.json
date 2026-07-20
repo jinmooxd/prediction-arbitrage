@@ -2,6 +2,15 @@
   "model": "sonnet[1m]",
   "language": "english",
   "effortLevel": "low",
-  "tui": "fullscreen"
-  
+  "tui": "fullscreen",
+  "permissions": {
+    "deny": [
+      "Read(./.env)",
+      "Read(./**/*.pem)",
+      "Read(./data/**)",
+      "Bash(cat .env*)",
+      "Bash(cat *.pem)",
+      "Bash(cat data/**)"
+    ]
+  }
 }

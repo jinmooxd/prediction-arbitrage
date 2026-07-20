@@ -13,10 +13,11 @@ Project-specific security gate for a trading-adjacent repo whose crown jewels ar
 - No credentials, tokens, or key material in code, tests, fixtures, committed configs, or docs. Kalshi RSA `*.pem` and Polymarket US Ed25519 keys must only ever be referenced by filesystem path from `.env`.
 - No secret values in log statements, exception messages, or error strings — check auth code paths especially: signing functions must never log the key, the signature input, or full headers.
 - Captured API-response fixtures are scrubbed: no account IDs, balances, order IDs, or auth headers.
-- `.gitignore` still covers `.env`, `*.pem`, `data/`; nothing in the diff weakens `.claude/settings.json` permission denials.
+- `.gitignore` still covers `.env`, `*.pem`, `data/`; nothing in the diff weakens the `.claude/settings.json` `permissions.deny` rules for `.env`/`*.pem`/`data/`. Key files (Kalshi RSA, Polymarket US Ed25519) are referenced from `.env` by absolute path outside the repo tree (e.g. `~/.keys/`) — flag any change that adds key material inside the repo.
 
 ### 2. Phase-0 invariant (BLOCKER)
 - No code that places, cancels, or amends orders on any venue — including "dormant" scaffolding, commented-out calls, or client methods for venue writes. If the current phase per `CLAUDE.md` is still 0, any execution-path code is a blocker regardless of intent.
+- **Pair approval:** no market pair is used (fetched, subscribed, recorded, or scored) without existing in the human-approved pair registry (resolution-rule hashes). No code path auto-approves a pair or auto-continues past a resolution-rule hash change — a hash change must suspend the pair, never silently re-approve it.
 
 ### 3. Money-math integrity (BLOCKER class)
 - No `float` in any price, fee, size-cost, or edge computation path (`Decimal` only). Grep the diff for `float(`, bare arithmetic on prices parsed via `json` without Decimal conversion.
@@ -45,5 +46,5 @@ Getting throttled or flagged by a venue is an availability incident for this pro
 ## Procedure
 1. Enumerate changed files; read each fully (not just hunks) if it touches auth, fees, spread, venues, or config.
 2. Walk the checklist against the diff; collect findings with file:line references.
-3. For BLOCKERs, propose the minimal fix. Do not implement fixes yourself if invoked as a gate — return findings to the orchestrator/implementer.
+3. For BLOCKERs, propose the minimal fix in words. This skill is read-only regardless of how it's invoked — never edit code yourself; return findings to the orchestrator/implementer.
 4. Verdict: PASS only with zero BLOCKERs and all WARNs either fixed or explicitly accepted by the user.

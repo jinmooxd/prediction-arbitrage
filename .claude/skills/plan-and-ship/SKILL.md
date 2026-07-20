@@ -40,7 +40,7 @@ For every completed unit and at milestone end:
 4. Dispatch code-reviewer on the combined diff; address its findings.
 5. Run the `security-review` skill on the diff before declaring the milestone shippable.
 
-A unit is DONE only when its acceptance signal passes. If it fails, iterate with the same agent (pass the failure output); after 2 failed iterations, escalate model or surface to the user.
+A unit is DONE only when its acceptance signal passes. If it fails, iterate with the same agent (pass the failure output); after 2 failed iterations, escalate to the next model tier if one exists (Sonnet → Opus), or surface to the user if already at Opus. This 2-iteration count (re-dispatches of the agent) is the single authoritative retry budget — it does not compound with an agent's own internal fix attempt on a single dispatch (see CLAUDE.md "Reporting failures").
 
 ### 6. Close out
 Check off completed tasks in IMPLEMENTATION_PLAN.md, write any empirical discoveries to `docs/runbooks/` or `docs/decisions/` (same PR), and summarize for the user: what shipped, what's verified, what's next.
